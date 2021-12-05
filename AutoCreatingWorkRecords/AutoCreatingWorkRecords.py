@@ -1,6 +1,12 @@
+import json
 
 # LoginInfo.txtからログイン情報を取得
+jsonData = open('LoginInfo.json', 'r', encoding='utf=8')
+loginInfo = json.load(jsonData)
+
 # LoginInfo.txtはクローズ
+jsonData.close()
+
 # chrome driverでGoogle Chromeを開く
 # ログインしたいページのURLを入力する
 # ID,パスワードを入力する
