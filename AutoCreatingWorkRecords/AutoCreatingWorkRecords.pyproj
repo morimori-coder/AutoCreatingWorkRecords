@@ -24,7 +24,11 @@
     <Compile Include="AutoCreatingWorkRecords.py" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="LoginInfo.json" />
+    <Content Include="Parameters\ElementsName.json" />
+    <Content Include="Parameters\LoginInfo.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Parameters\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
