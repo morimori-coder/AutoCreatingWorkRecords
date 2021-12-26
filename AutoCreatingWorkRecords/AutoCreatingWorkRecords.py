@@ -3,6 +3,11 @@ from selenium.webdriver.common.keys import Keys
 import GetJson
 import time
 import const
+import bs4 
+import pyautogui
+import datetime
+import re
+import openpyxl
 
 loginInfo = GetJson.get_json_data(const.LOGIN_INFO)
 
@@ -34,6 +39,29 @@ time.sleep(2)
 monthSummery = driver.find_element_by_class_name(elementsNames['monthlySum'])
 monthSummery.click()
 time.sleep(2)
+
+pyautogui.hotkey('ctrl','s')
+time.sleep(2)
+fine_name = datetime.datetime.now().strftime('%Y%m%d') + 'wordRecord.html'
+pyautogui.typewrite(fine_name)
+pyautogui.press("enter")
+time.sleep(3)
+
+#ローカルに保存した勤務表を開く
+savePath = GetJson.get_json_data(const.SAVE_PATH)
+soup = bs4.BeautifulSoup(open(savePath["folderPath"] + fine_name, encoding = 'utf-8'), 'html.parser')
+#勤務表の要素を取得する
+element = soup.find_all('tr', attrs = {'class' : re.compile('prtv.*')})
+
+#B2にyyyy年mm月
+#C5にyyyy年
+#C6にmm月度
+for row in element:
+    print(row)
+    #C14～には有給(全休)、有給(阪急)、欠勤、遅刻、早退のいずれか
+    #Dは始業時間hh:mm
+    #Eは退勤時間hh:mm
+    #Fは休憩h:mm
 
 driver.quit()
 
