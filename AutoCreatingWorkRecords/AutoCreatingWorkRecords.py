@@ -48,28 +48,52 @@ pyautogui.press("enter")
 time.sleep(3)
 
 #ローカルに保存した勤務表を開く
+fine_name = datetime.datetime.now().strftime('%Y%m%d') + 'wordRecord.html'
 savePath = GetJson.get_json_data(const.SAVE_PATH)
 soup = bs4.BeautifulSoup(open(savePath["folderPath"] + fine_name, encoding = 'utf-8'), 'html.parser')
 #勤務表の要素を取得する
 element = soup.find_all('tr', attrs = {'class' : re.compile('prtv.*')})
 
+#Excelの勤務表を開く
+wb = openpyxl.load_workbook(savePath["excelPath"])
+ws = wb["勤怠管理表"]
+
+dateInfo = datetime.datetime.now()
 #B2にyyyy年mm月
+#ws["B2"].value = str(dateInfo.year) + "年" + str(dateInfo.month) + "月"
+ws["B2"].value = dateInfo.strftime('%Y/%m/') + '1'
 #C5にyyyy年
+ws["C5"].value = str(dateInfo.year) + "年"
 #C6にmm月度
+ws["C6"].value = str(dateInfo.month) + "月度"
+
+rowNum = 14
 for row in element:
-    print(row)
+    if rowNum > 44 :
+        break
     #C14～には有給(全休)、有給(阪急)、欠勤、遅刻、早退のいずれか
+    ws["C" + str(rowNum)].value = ''
+    ws["D" + str(rowNum)].value = ''
+    ws["E" + str(rowNum)].value = ''
+    ws["F" + str(rowNum)].value = ''
+    ws["N" + str(rowNum)].value = ''
+
+    if row.contents[5].string is None:
+        rowNum += 1
+        continue
     #Dは始業時間hh:mm
+    tdatetime = datetime.datetime.strptime(row.contents[5].string + ':00', '%H:%M:%S')
+    ws["D" + str(rowNum)].value = tdatetime.time()
+
     #Eは退勤時間hh:mm
+    tdatetime = datetime.datetime.strptime(row.contents[6].string + ':00', '%H:%M:%S')
+    ws["E" + str(rowNum)].value = tdatetime.time()
+
     #Fは休憩h:mm
+    tdatetime = datetime.datetime.strptime(row.contents[9].string + ':00', '%H:%M:%S')
+    ws["F" + str(rowNum)].value = tdatetime.time()
+
+    rowNum += 1
 
 driver.quit()
-
-
-
-
-# Ctrl + Sを実行
-# 勤務表.html としてローカルに保存
-# 勤務表.htmlをbeautifulsoupで開く
-# 勤務表の要素を取得する
-# 取得した要素の値を利用し、Excelを作成する（この辺りは今後やり方を調べる）
+wb.save(savePath["excelPath"])
