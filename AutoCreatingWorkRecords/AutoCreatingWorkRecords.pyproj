@@ -31,7 +31,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Parameters\ElementsName.json" />
-    <Content Include="Parameters\SavePath.json" />
+    <Content Include="Parameters\Path.json" />
     <Content Include="Parameters\LoginInfo.json" />
   </ItemGroup>
   <ItemGroup>
